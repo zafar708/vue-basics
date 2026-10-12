@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import { create, index } from '@/routes/posts';
 
 defineProps({
     memberSince: String,
@@ -38,10 +39,10 @@ const user = computed(() => page.props.auth.user);
     </div>
 
     <div class="mt-6 flex gap-4">
-        <Link href="/posts/create" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        <Link :href="create()" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
             New Post
         </Link>
-        <Link href="/posts" class="rounded-lg bg-white px-4 py-2 font-medium text-gray-700 shadow hover:bg-gray-200">
+        <Link :href="index()" class="rounded-lg bg-white px-4 py-2 font-medium text-gray-700 shadow hover:bg-gray-200">
             View Posts
         </Link>
     </div>

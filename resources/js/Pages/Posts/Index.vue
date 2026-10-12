@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link, router } from '@inertiajs/vue3';
+import { create, destroy, edit, show } from '@/routes/posts';
 
 defineProps({
     posts: Object,
@@ -7,7 +8,7 @@ defineProps({
 
 function deletePost(post) {
     if (confirm(`Delete "${post.title}"?`)) {
-        router.delete(`/posts/${post.id}`, { preserveScroll: true });
+        router.delete(destroy(post.id), { preserveScroll: true });
     }
 }
 </script>
@@ -17,7 +18,7 @@ function deletePost(post) {
 
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800">Posts</h1>
-        <Link href="/posts/create" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        <Link :href="create()" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
             New Post
         </Link>
     </div>
@@ -37,8 +38,8 @@ function deletePost(post) {
                 <p class="line-clamp-3 text-sm text-gray-600">{{ post.description }}</p>
 
                 <div class="mt-auto flex gap-4 pt-3 text-sm">
-                    <Link :href="`/posts/${post.slug}`" class="text-blue-500 hover:underline">View</Link>
-                    <Link :href="`/posts/${post.id}/edit`" class="text-green-600 hover:underline">Edit</Link>
+                    <Link :href="show(post.slug)" class="text-blue-500 hover:underline">View</Link>
+                    <Link :href="edit(post.id)" class="text-green-600 hover:underline">Edit</Link>
                     <button type="button" class="text-red-500 hover:underline" @click="deletePost(post)">Delete</button>
                 </div>
             </div>

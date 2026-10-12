@@ -1,5 +1,6 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3';
+import { update } from '@/routes/password';
 
 const props = defineProps({
     token: String,
@@ -16,7 +17,7 @@ const form = useForm({
 const inputClasses = 'w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500';
 
 function submit() {
-    form.post('/reset-password', {
+    form.submit(update(), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 }

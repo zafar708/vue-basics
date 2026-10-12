@@ -1,5 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { login } from '@/routes';
+import { email } from '@/routes/password';
 
 const form = useForm({
     email: '',
@@ -8,7 +10,7 @@ const form = useForm({
 const inputClasses = 'w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500';
 
 function submit() {
-    form.post('/forgot-password');
+    form.submit(email());
 }
 </script>
 
@@ -38,7 +40,7 @@ function submit() {
 
             <p class="text-center text-sm text-gray-600">
                 Remembered it?
-                <Link href="/login" class="text-blue-500 hover:underline">Back to login</Link>
+                <Link :href="login()" class="text-blue-500 hover:underline">Back to login</Link>
             </p>
         </form>
     </div>

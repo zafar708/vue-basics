@@ -1,5 +1,8 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { store } from '@/actions/App/Http/Controllers/Auth/LoginController';
+import { register } from '@/routes';
+import { request as passwordRequest } from '@/routes/password';
 
 const form = useForm({
     email: '',
@@ -10,7 +13,7 @@ const form = useForm({
 const inputClasses = 'w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500';
 
 function submit() {
-    form.post('/login', {
+    form.submit(store(), {
         onFinish: () => form.reset('password'),
     });
 }
@@ -32,7 +35,7 @@ function submit() {
             <div class="flex flex-col gap-1">
                 <div class="flex items-center justify-between">
                     <label for="password" class="font-medium text-gray-700">Password</label>
-                    <Link href="/forgot-password" class="text-sm text-blue-500 hover:underline">Forgot password?</Link>
+                    <Link :href="passwordRequest()" class="text-sm text-blue-500 hover:underline">Forgot password?</Link>
                 </div>
                 <input id="password" v-model="form.password" type="password" autocomplete="current-password" :class="inputClasses" />
                 <p v-if="form.errors.password" class="text-sm text-red-600">{{ form.errors.password }}</p>
@@ -53,7 +56,7 @@ function submit() {
 
             <p class="text-center text-sm text-gray-600">
                 Don't have an account?
-                <Link href="/register" class="text-blue-500 hover:underline">Register</Link>
+                <Link :href="register()" class="text-blue-500 hover:underline">Register</Link>
             </p>
         </form>
     </div>

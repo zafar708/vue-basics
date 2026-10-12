@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { index, store } from '@/routes/posts';
 
 const form = useForm({
     title: '',
@@ -20,7 +21,7 @@ function selectImage(event) {
 }
 
 function submit() {
-    form.post('/posts', { forceFormData: true });
+    form.submit(store(), { forceFormData: true });
 }
 </script>
 
@@ -70,7 +71,7 @@ function submit() {
                     Create Post
                 </button>
 
-                <Link href="/posts" class="text-gray-600 hover:underline">Cancel</Link>
+                <Link :href="index()" class="text-gray-600 hover:underline">Cancel</Link>
             </div>
         </form>
     </div>

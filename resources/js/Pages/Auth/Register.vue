@@ -1,5 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { store } from '@/actions/App/Http/Controllers/Auth/RegisterController';
+import { login } from '@/routes';
 
 const form = useForm({
     name: '',
@@ -11,7 +13,7 @@ const form = useForm({
 const inputClasses = 'w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500';
 
 function submit() {
-    form.post('/register', {
+    form.submit(store(), {
         onFinish: () => form.reset('password', 'password_confirmation'),
     });
 }
@@ -63,7 +65,7 @@ function submit() {
 
             <p class="text-center text-sm text-gray-600">
                 Already have an account?
-                <Link href="/login" class="text-blue-500 hover:underline">Login</Link>
+                <Link :href="login()" class="text-blue-500 hover:underline">Login</Link>
             </p>
         </form>
     </div>

@@ -1,5 +1,6 @@
 <script setup>
 import { Head, Link } from '@inertiajs/vue3';
+import { index, show } from '@/routes/posts';
 
 defineProps({
     message: String,
@@ -18,7 +19,7 @@ defineProps({
     <section class="mt-10">
         <div class="flex items-center justify-between">
             <h2 class="text-2xl font-bold text-gray-800">Latest Posts</h2>
-            <Link href="/posts" class="text-blue-500 hover:underline">View all posts</Link>
+            <Link :href="index()" class="text-blue-500 hover:underline">View all posts</Link>
         </div>
 
         <p v-if="posts.length === 0" class="mt-6 rounded-xl bg-white p-10 text-center text-gray-500 shadow">
@@ -34,7 +35,7 @@ defineProps({
                     <h3 class="text-lg font-semibold text-gray-800">{{ post.title }}</h3>
                     <p class="line-clamp-3 text-sm text-gray-600">{{ post.description }}</p>
 
-                    <Link :href="`/posts/${post.slug}`" class="mt-auto pt-3 text-sm text-blue-500 hover:underline">
+                    <Link :href="show(post.slug)" class="mt-auto pt-3 text-sm text-blue-500 hover:underline">
                         Read more
                     </Link>
                 </div>

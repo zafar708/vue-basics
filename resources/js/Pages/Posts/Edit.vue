@@ -1,6 +1,7 @@
 <script setup>
 import { Head, Link, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
+import { show, update } from '@/routes/posts';
 
 const props = defineProps({
     post: Object,
@@ -26,7 +27,7 @@ function selectImage(event) {
 function submit() {
     form
         .transform((data) => ({ ...data, _method: 'put' }))
-        .post(`/posts/${props.post.id}`, { forceFormData: true });
+        .post(update.url(props.post.id), { forceFormData: true });
 }
 </script>
 
@@ -77,7 +78,7 @@ function submit() {
                     Update Post
                 </button>
 
-                <Link :href="`/posts/${post.slug}`" class="text-gray-600 hover:underline">Cancel</Link>
+                <Link :href="show(post.slug)" class="text-gray-600 hover:underline">Cancel</Link>
             </div>
         </form>
     </div>
