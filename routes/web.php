@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PostController;
 use App\Models\Post;
@@ -27,11 +28,8 @@ Route::get('/about-us', function () {
     ]);
 })->name('about-us');
 
-Route::get('/contact-us', function () {
-    return Inertia::render('ContactUs', [
-        'message' => 'Ye Contact Us page hai!',
-    ]);
-})->name('contact-us');
+Route::get('/contact-us', [ContactController::class, 'create'])->name('contact-us');
+Route::post('/contact-us', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact-us.store');
 
 Route::resource('posts', PostController::class)->except('show');
 Route::get('posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
