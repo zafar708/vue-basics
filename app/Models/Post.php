@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 #[Fillable(['title', 'slug', 'description', 'image'])]
 #[Appends(['image_url'])]
@@ -15,6 +16,16 @@ class Post extends Model
 {
     /** @use HasFactory<PostFactory> */
     use HasFactory;
+
+    /**
+     * The user who wrote the post.
+     *
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * The public URL of the post image, or null when the post has no image.

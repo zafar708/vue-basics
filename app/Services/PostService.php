@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -10,11 +11,12 @@ use Illuminate\Support\Str;
 class PostService
 {
     /**
-     * Create a post, generating its slug from the title and storing the image.
+     * Create a post for the given user, generating its slug from the title
+     * and storing the image.
      *
      * @param  array{title: string, description: string}  $data
      */
-    public function store(array $data, ?UploadedFile $image = null): Post
+    public function store(User $user, array $data, ?UploadedFile $image = null): Post
     {
         $data['slug'] = $this->uniqueSlug($data['title']);
 
@@ -22,7 +24,7 @@ class PostService
             $data['image'] = $image->store('posts', 'public');
         }
 
-        return Post::create($data);
+        return $user->posts()->create($data);
     }
 
     /**

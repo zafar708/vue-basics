@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -39,6 +40,9 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             'auth' => [
                 'user' => fn () => $request->user()?->only('id', 'name', 'email'),
+                'can' => fn () => [
+                    'createPosts' => (bool) $request->user()?->can('create', Post::class),
+                ],
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class PostSeeder extends Seeder
@@ -12,6 +13,6 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        Post::factory()->count(12)->create();
+        Post::factory()->count(12)->recycle(User::all())->create();
     }
 }

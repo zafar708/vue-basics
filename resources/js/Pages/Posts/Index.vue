@@ -1,6 +1,8 @@
 <script setup>
-import { Head, Link, router } from '@inertiajs/vue3';
+import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import { create, destroy, edit, show } from '@/routes/posts';
+
+const page = usePage();
 
 defineProps({
     posts: Object,
@@ -18,7 +20,7 @@ function deletePost(post) {
 
     <div class="flex items-center justify-between">
         <h1 class="text-3xl font-bold text-gray-800">Posts</h1>
-        <Link :href="create()" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        <Link v-if="page.props.auth.can.createPosts" :href="create()" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
             New Post
         </Link>
     </div>
@@ -39,8 +41,10 @@ function deletePost(post) {
 
                 <div class="mt-auto flex gap-4 pt-3 text-sm">
                     <Link :href="show(post.slug)" class="text-blue-500 hover:underline">View</Link>
-                    <Link :href="edit(post.id)" class="text-green-600 hover:underline">Edit</Link>
-                    <button type="button" class="text-red-500 hover:underline" @click="deletePost(post)">Delete</button>
+                    <Link v-if="post.can.update" :href="edit(post.id)" class="text-green-600 hover:underline">Edit</Link>
+                    <button v-if="post.can.delete" type="button" class="text-red-500 hover:underline" @click="deletePost(post)">
+                        Delete
+                    </button>
                 </div>
             </div>
         </article>

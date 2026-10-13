@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -12,7 +13,9 @@ test('the registration page can be rendered', function () {
         ->assertInertia(fn (Assert $page) => $page->component('Auth/Register'));
 });
 
-test('a new user can register and is logged in', function () {
+test('a new user can register and is logged in as an author', function () {
+    $this->seed(RolePermissionSeeder::class);
+
     $this->post('/register', [
         'name' => 'Test User',
         'email' => 'test@example.com',
@@ -23,7 +26,8 @@ test('a new user can register and is logged in', function () {
     $user = User::where('email', 'test@example.com')->first();
 
     expect($user)->not->toBeNull()
-        ->and($user->name)->toBe('Test User');
+        ->and($user->name)->toBe('Test User')
+        ->and($user->hasRole('author'))->toBeTrue();
     $this->assertAuthenticatedAs($user);
 });
 

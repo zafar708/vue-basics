@@ -7,6 +7,8 @@ use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Services\PostService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -18,10 +20,13 @@ class PostController extends Controller
     /**
      * Display a listing of the posts.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         return Inertia::render('Posts/Index', [
-            'posts' => Post::latest()->paginate(9),
+            'posts' => Post::latest()->paginate(9)->through(fn (Post $post): array => [
+                ...$post->toArray(),
+                'can' => $this->postAbilities($request, $post),
+            ]),
         ]);
     }
 
@@ -30,6 +35,8 @@ class PostController extends Controller
      */
     public function create(): Response
     {
+        Gate::authorize('create', Post::class);
+
         return Inertia::render('Posts/Create');
     }
 
@@ -39,6 +46,7 @@ class PostController extends Controller
     public function store(StorePostRequest $request): RedirectResponse
     {
         $post = $this->postService->store(
+            $request->user(),
             $request->safe()->except('image'),
             $request->file('image'),
         );
@@ -49,10 +57,11 @@ class PostController extends Controller
     /**
      * Display the specified post.
      */
-    public function show(Post $post): Response
+    public function show(Request $request, Post $post): Response
     {
         return Inertia::render('Posts/Show', [
             'post' => $post,
+            'can' => $this->postAbilities($request, $post),
         ]);
     }
 
@@ -61,6 +70,8 @@ class PostController extends Controller
      */
     public function edit(Post $post): Response
     {
+        Gate::authorize('update', $post);
+
         return Inertia::render('Posts/Edit', [
             'post' => $post,
         ]);
@@ -85,6 +96,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post): RedirectResponse
     {
+        Gate::authorize('delete', $post);
+
         $post->delete();
 
         if ($post->image) {
@@ -92,5 +105,18 @@ class PostController extends Controller
         }
 
         return to_route('posts.index')->with('success', 'Post deleted successfully.');
+    }
+
+    /**
+     * What the current visitor may do with the post, for showing or hiding buttons.
+     *
+     * @return array{update: bool, delete: bool}
+     */
+    private function postAbilities(Request $request, Post $post): array
+    {
+        return [
+            'update' => (bool) $request->user()?->can('update', $post),
+            'delete' => (bool) $request->user()?->can('delete', $post),
+        ];
     }
 }

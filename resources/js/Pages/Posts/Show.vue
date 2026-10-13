@@ -4,6 +4,7 @@ import { destroy, edit, index } from '@/routes/posts';
 
 const props = defineProps({
     post: Object,
+    can: Object,
 });
 
 function deletePost() {
@@ -29,8 +30,8 @@ function deletePost() {
 
             <div class="flex gap-4 border-t border-gray-100 pt-4 text-sm">
                 <Link :href="index()" class="text-gray-600 hover:underline">Back to posts</Link>
-                <Link :href="edit(post.id)" class="text-green-600 hover:underline">Edit</Link>
-                <button type="button" class="text-red-500 hover:underline" @click="deletePost">Delete</button>
+                <Link v-if="can.update" :href="edit(post.id)" class="text-green-600 hover:underline">Edit</Link>
+                <button v-if="can.delete" type="button" class="text-red-500 hover:underline" @click="deletePost">Delete</button>
             </div>
         </div>
     </article>

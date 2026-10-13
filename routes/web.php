@@ -31,7 +31,7 @@ Route::get('/about-us', function () {
 Route::get('/contact-us', [ContactController::class, 'create'])->name('contact-us');
 Route::post('/contact-us', [ContactController::class, 'store'])->middleware('throttle:5,1')->name('contact-us.store');
 
-Route::resource('posts', PostController::class)->except('show');
+Route::get('posts', [PostController::class, 'index'])->name('posts.index');
 Route::get('posts/{post:slug}', [PostController::class, 'show'])->name('posts.show');
 
 Route::middleware('guest')->group(function () {
@@ -49,6 +49,7 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
+    Route::resource('posts', PostController::class)->except(['index', 'show']);
     Route::get('dashboard', DashboardController::class)->name('dashboard');
     Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
 });

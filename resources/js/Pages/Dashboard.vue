@@ -39,7 +39,7 @@ const user = computed(() => page.props.auth.user);
     </div>
 
     <div class="mt-6 flex gap-4">
-        <Link :href="create()" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
+        <Link v-if="page.props.auth.can.createPosts" :href="create()" class="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700">
             New Post
         </Link>
         <Link :href="index()" class="rounded-lg bg-white px-4 py-2 font-medium text-gray-700 shadow hover:bg-gray-200">
