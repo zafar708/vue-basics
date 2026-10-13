@@ -5,6 +5,8 @@ namespace App\Models;
 use Database\Factories\PostFactory;
 use Illuminate\Database\Eloquent\Attributes\Appends;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,6 +27,20 @@ class Post extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Limit the query to the posts the user may view: every post with
+     * "view posts", otherwise only their own posts.
+     *
+     * @param  Builder<Post>  $query
+     */
+    #[Scope]
+    protected function visibleTo(Builder $query, User $user): void
+    {
+        if (! $user->checkPermissionTo('view posts')) {
+            $query->whereBelongsTo($user);
+        }
     }
 
     /**

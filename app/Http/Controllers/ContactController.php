@@ -15,9 +15,7 @@ class ContactController extends Controller
      */
     public function create(): Response
     {
-        return Inertia::render('ContactUs', [
-            'message' => 'Ye Contact Us page hai!',
-        ]);
+        return Inertia::render('ContactUs');
     }
 
     /**

@@ -27,7 +27,6 @@ function submit() {
 
     <div class="bg-white p-10 rounded-xl shadow">
         <h1 class="text-3xl font-bold text-gray-800">Contact Us</h1>
-        <p class="mt-4 text-gray-600">{{ message }}</p>
 
         <form @submit.prevent="submit" class="mt-8 flex flex-col gap-6">
             <div class="grid gap-6 sm:grid-cols-2">

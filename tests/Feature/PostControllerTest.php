@@ -32,6 +32,15 @@ test('a user without a role cannot create a post', function () {
     $this->assertDatabaseCount('posts', 0);
 });
 
+test('an author can open the create post page', function () {
+    $author = User::factory()->create()->assignRole('author');
+
+    $this->actingAs($author)
+        ->get('/posts/create')
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->component('Posts/Create'));
+});
+
 test('a created post belongs to the logged in author', function () {
     $author = User::factory()->create()->assignRole('author');
 
@@ -95,18 +104,76 @@ test('an admin can delete any post', function () {
     $this->assertModelMissing($post);
 });
 
-test('the posts list only allows an author to edit and delete their own posts', function () {
+test('guests are redirected to the login page when viewing posts', function () {
+    $this->get('/posts')->assertRedirect('/login');
+});
+
+test('the posts list only shows an author their own posts', function () {
     $author = User::factory()->create()->assignRole('author');
-    $ownPost = Post::factory()->for($author)->create(['created_at' => now()]);
-    Post::factory()->create(['created_at' => now()->subDay()]);
+    $ownPost = Post::factory()->for($author)->create();
+    Post::factory()->create();
 
     $this->actingAs($author)
         ->get('/posts')
         ->assertInertia(fn (Assert $page) => $page
             ->where('auth.can.createPosts', true)
+            ->has('posts.data', 1)
             ->where('posts.data.0.id', $ownPost->id)
             ->where('posts.data.0.can', ['update' => true, 'delete' => true])
-            ->where('posts.data.1.can', ['update' => false, 'delete' => false]));
+            ->missing('posts.data.0.user'));
+});
+
+test('the posts list shows an admin every post with its author', function () {
+    $admin = User::factory()->create()->assignRole('admin');
+    $writer = User::factory()->create(['name' => 'Jane Writer']);
+    Post::factory()->for($writer)->create(['created_at' => now()]);
+    Post::factory()->create(['created_at' => now()->subDay()]);
+
+    $this->actingAs($admin)
+        ->get('/posts')
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('posts.data', 2)
+            ->where('posts.data.0.user.name', 'Jane Writer')
+            ->where('posts.data.0.can', ['update' => true, 'delete' => true]));
+});
+
+test('guests see every user\'s posts on the home page', function () {
+    Post::factory()->count(2)->create();
+
+    $this->get('/')
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->has('posts.data', 2));
+});
+
+test('guests can read a post but cannot edit or delete it', function () {
+    $post = Post::factory()->create();
+
+    $this->get("/posts/{$post->slug}")
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('post.id', $post->id)
+            ->where('can', ['update' => false, 'delete' => false])
+            ->missing('post.user'));
+});
+
+test('an author can read another user\'s post but cannot edit or delete it', function () {
+    $author = User::factory()->create()->assignRole('author');
+    $post = Post::factory()->create();
+
+    $this->actingAs($author)
+        ->get("/posts/{$post->slug}")
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->where('can', ['update' => false, 'delete' => false]));
+});
+
+test('an admin can view another user\'s post with its author', function () {
+    $admin = User::factory()->create()->assignRole('admin');
+    $post = Post::factory()->for(User::factory()->create(['name' => 'Jane Writer']))->create();
+
+    $this->actingAs($admin)
+        ->get("/posts/{$post->slug}")
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page->where('post.user.name', 'Jane Writer'));
 });
 
 test('deleting a user deletes their posts', function () {

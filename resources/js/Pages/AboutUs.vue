@@ -43,11 +43,11 @@ const teamMembers = [
     <Head title="About Us" />
 
     <div class="flex flex-col gap-10">
-        <section class="rounded-xl bg-gradient-to-br from-blue-600 to-indigo-700 p-10 text-white shadow">
+        <section class="rounded-xl bg-gradient-to-br from-gray-400 to-gray-500 p-10 text-white shadow">
             <p class="text-sm font-semibold uppercase tracking-wider text-blue-200">About Us</p>
             <h1 class="mt-2 text-4xl font-bold">We build things people love to use.</h1>
             <p class="mt-4 max-w-2xl text-blue-100">
-                {{ message }} Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
                 incididunt ut labore et dolore magna aliqua.
             </p>
         </section>

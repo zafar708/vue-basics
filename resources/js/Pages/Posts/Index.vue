@@ -37,6 +37,7 @@ function deletePost(post) {
             <div class="flex flex-1 flex-col gap-2 p-5">
                 <h2 class="text-lg font-semibold text-gray-800">{{ post.title }}</h2>
                 <p class="text-xs text-gray-400">{{ post.slug }}</p>
+                <p v-if="post.user" class="text-sm text-gray-500">By {{ post.user.name }}</p>
                 <p class="line-clamp-3 text-sm text-gray-600">{{ post.description }}</p>
 
                 <div class="mt-auto flex gap-4 pt-3 text-sm">
@@ -57,8 +58,9 @@ function deletePost(post) {
                 :href="link.url"
                 class="rounded-lg px-3 py-1 text-sm"
                 :class="link.active ? 'bg-blue-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-200'"
-                v-html="link.label"
-            />
+            >
+                <span v-html="link.label"></span>
+            </Link>
             <span v-else class="rounded-lg px-3 py-1 text-sm text-gray-400" v-html="link.label"></span>
         </template>
     </nav>

@@ -17,7 +17,7 @@ const successMessage = computed(() => page.props.flash?.success);
                 <Link :href="home()" class="text-blue-500 hover:underline">Home</Link>
                 <Link :href="aboutUs()" class="text-blue-500 hover:underline">About Us</Link>
                 <Link :href="contactUs()" class="text-blue-500 hover:underline">Contact Us</Link>
-                <Link :href="postsIndex()" class="text-blue-500 hover:underline">Posts</Link>
+                <Link v-if="user" :href="postsIndex()" class="text-blue-500 hover:underline">Posts</Link>
 
                 <div class="ml-auto flex items-center gap-6">
                     <template v-if="user">

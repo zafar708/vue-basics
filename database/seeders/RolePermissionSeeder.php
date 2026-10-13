@@ -12,13 +12,15 @@ class RolePermissionSeeder extends Seeder
     /**
      * Create the post permissions and the roles that hold them.
      *
-     * Admins can manage every post; authors can create posts and manage only their own.
+     * Admins can view and manage every post; authors can create posts and
+     * view and manage only their own.
      */
     public function run(): void
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $permissions = [
+            'view posts',
             'create posts',
             'edit posts',
             'delete posts',
@@ -31,6 +33,7 @@ class RolePermissionSeeder extends Seeder
         }
 
         Role::findOrCreate('admin')->syncPermissions([
+            'view posts',
             'create posts',
             'edit posts',
             'delete posts',

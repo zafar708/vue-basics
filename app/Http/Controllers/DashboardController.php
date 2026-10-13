@@ -16,7 +16,7 @@ class DashboardController extends Controller
     {
         return Inertia::render('Dashboard', [
             'memberSince' => $request->user()->created_at->toFormattedDateString(),
-            'totalPosts' => Post::count(),
+            'totalPosts' => Post::visibleTo($request->user())->count(),
         ]);
     }
 }

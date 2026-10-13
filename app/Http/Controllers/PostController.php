@@ -23,10 +23,14 @@ class PostController extends Controller
     public function index(Request $request): Response
     {
         return Inertia::render('Posts/Index', [
-            'posts' => Post::latest()->paginate(9)->through(fn (Post $post): array => [
-                ...$post->toArray(),
-                'can' => $this->postAbilities($request, $post),
-            ]),
+            'posts' => Post::visibleTo($request->user())
+                ->when($this->showsAuthor($request), fn ($query) => $query->with('user:id,name'))
+                ->latest()
+                ->paginate(9)
+                ->through(fn (Post $post): array => [
+                    ...$post->toArray(),
+                    'can' => $this->postAbilities($request, $post),
+                ]),
         ]);
     }
 
@@ -59,6 +63,10 @@ class PostController extends Controller
      */
     public function show(Request $request, Post $post): Response
     {
+        if ($this->showsAuthor($request)) {
+            $post->load('user:id,name');
+        }
+
         return Inertia::render('Posts/Show', [
             'post' => $post,
             'can' => $this->postAbilities($request, $post),
@@ -105,6 +113,14 @@ class PostController extends Controller
         }
 
         return to_route('posts.index')->with('success', 'Post deleted successfully.');
+    }
+
+    /**
+     * Whether the visitor sees other users' posts and so needs each post's author.
+     */
+    private function showsAuthor(Request $request): bool
+    {
+        return (bool) $request->user()?->checkPermissionTo('view posts');
     }
 
     /**
